@@ -1,0 +1,55 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname a7) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+(require 2htdp/universe)
+
+; Frequency is a (make-frequency String Number)
+(define-struct frequency[word count])
+
+;Examples:
+(define f1 (make-frequency "Hello" 2))
+(define f2 (make-frequency "World" 5))
+(define f3 (make-frequency "How're" 3))
+(define f4 (make-frequency "you?" 1))
+
+; a ListOfString is one of:
+; - empty
+; - (cons String ListOfString)
+
+; a ListOfFrequency is one of:
+; - empty
+; - (cons Frequency ListOfFrequency)
+
+; Examples:
+(define lof1 empty)
+(define lof2 (list f1))
+(define lof3 (list f1 f2))
+(define lof4 (list f1 f2 f3 f4))
+
+; count-word : ListOfFrequency String -> ListOfFrequency
+; Adds one to the frequency of that string,
+; or put frequency 1 if that string doesnt exist in the ListOfFrequency
+(define (count-word lof s)
+  (cond
+    [(empty? lof)(cons (make-frequency s 1) lof)]
+    [else (cond
+            [(string=? s (frequency-word (first lof)))
+             (cons (make-frequency
+                    (frequency-word (first lof))
+                    (add1 (frequency-count (first lof))))
+                   (rest lof))]
+            [else (count-word (rest lof) s)])]))
+
+(check-expect (count-word lof1 "Hello") (list (make-frequency "Hello" 1)))
+(check-expect (count-word lof2 "Hello") (list (make-frequency "Hello" 3)))
+(check-expect (count-word lof2 "Hi") (list (make-frequency "Hi" 1)
+                                           (make-frequency "Hello" 3)))
+(check-expect (count-word lof3 "World") (list (make-frequency "Hello" 2)
+                                               (make-frequency "World" 6)))
+(check-expect (count-word lof4 "Hi") (list (make-frequency "Hi" 1) f1 f2 f3 f4 ))
+(check-expect (count-word lof4 "How're") (list f1
+                                               f2
+                                               (make-frequency "How're" 4)
+                                               f4))
+

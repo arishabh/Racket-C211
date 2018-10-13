@@ -1,0 +1,217 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname |Game 1|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+(require 2htdp/universe)
+
+(define background (rectangle 200 300 "solid" "black"))
+(define alien (circle 10 "solid" "green"))
+(define alien-speed 0.25)
+(define defender-y 280)
+
+(define defender (triangle 20 "solid" "white"))
+
+(define bullet (rectangle 3 8 "solid" "white"))
+
+(define const-speed 3)
+(define player-speed 10)
+
+; a Posn is (make-posn Number Number)
+(define p1(make-posn 1 2))
+(define p2(make-posn 150 100))
+
+;process-posn : Posn -> ...
+; ...
+(define (process-posn p)
+  (... (posn-x p) ... (posn-y p) ...))
+
+; place-posn : posn Image Image -> Image
+; Place image on given posn
+(define (place-posn p inv img)
+  (place-image inv (posn-x p) (posn-y p) img))
+
+(check-expect (place-posn p1 alien background)
+              (place-image alien
+                           (posn-x p1)
+                           (posn-y p1)
+                           background))
+
+(check-expect (place-posn p2 (triangle 10 "solid" "red")
+                          (empty-scene 200 300))
+              (place-image (triangle 10 "solid" "red")
+                           (posn-x p2)
+                           (posn-y p2)
+                           (empty-scene 200 300)))
+
+; A ListOfPosns is one of:
+; - empty
+; - (cons Posn ListOfPosns)
+(define ps0 empty)
+(define ps1 (cons p1 empty))
+(define ps2 (cons p2 ps1))
+
+; process-posns : ListOfPosns -> ...
+; ...
+(define (process-posns ps)
+  (cond
+    [(empty? ps) ...]
+    [else (... (process-posn(first ps)) ...
+           ... (process-posns (rest ps)) ...)]))
+
+; draw-aliens : ListOfPosns -> Image
+; draws and alien on the background on the given position
+(define (draw-aliens ps)
+  (cond
+    [(empty? ps) background]
+    [else (place-posn (first ps)
+                       alien 
+                       (draw-aliens (rest ps)))]))
+
+(check-expect (draw-aliens ps0) background)
+(check-expect (draw-aliens ps1) (place-image alien 1 2 background))
+(check-expect (draw-aliens ps2) (place-image alien 1 2
+                                             (place-image alien 150 100
+                                                          background)))
+
+; move-aliens : ListOfPosns -> ListOfPosns
+; Moves the Posns down by 1 y
+(define (move-aliens ps)
+  (cond
+    [(empty? ps) empty]
+    [else (cons (make-posn
+                 (posn-x (first ps))
+                 (+ alien-speed (posn-y (first ps))))
+                (move-aliens (rest ps)))]))
+
+(check-expect (move-aliens empty) empty)
+(check-expect (move-aliens ps1) (cons (make-posn (posn-x p1)
+                                                 (+ alien-speed(posn-y p1))) empty))
+(check-expect (move-aliens ps2) (cons (make-posn (posn-x p2)
+                                                 (+ alien-speed(posn-y p2)))
+                                      (cons (make-posn (posn-x p1)
+                                                       (+ alien-speed (posn-y p1))) empty)))
+
+; a NaturalNumber is one of:
+; - 0
+; - (add1 NaturalNumber)
+
+; process-nat : NaturalNumber -> ...
+; ...
+(define (process-nat n)
+  (cond
+    [(zero? n) ...]
+    [else (... (process-nat (sub1 n)) ...)]))
+
+; random-aliens : NaturalNumber -> ListOfPosns
+; generate a list of posns as per the number given at random x values at y = 15
+(define (random-aliens n)
+  (cond
+    [(zero? n) empty]
+    [else (cons (make-posn (random 200)
+                           15)
+                (random-aliens (sub1 n)))]))
+
+(check-expect (random-aliens 0) empty)
+(check-random (random-aliens 1) (cons (make-posn (random 200) 15) empty))
+
+; a MyabePosn is one of
+; - (make-no-bullet)
+; - Posn
+(define-struct no-bullet())
+
+; pricess-maybeposn : MaybePOsn -> ...
+(define (process-mp mp)
+  (cond
+    [(no-bullet? mp) ...]
+    [else (... (posn-x mp) ... (posn-y mp) ...)]))
+
+
+; a World is a (make-world ListOfPosns Number MaybePosn)
+(define-struct world(aliens player bullet))
+
+; process-world : World -> ...
+(define (process-world w)
+  (... (world-aliens w) ... (world-player w) ... (world-bullet w)))
+
+; Examples:
+(define w1 (make-world (list (make-posn 20 20) (make-posn 50 20))
+                       100
+                       (make-no-bullet)))
+(define w2 (make-world (list (make-posn 20 20) (make-posn 50 20))
+                       100
+                       (make-posn 100 100)))
+(define w3 (make-world empty
+                       100
+                       (make-posn 100 100)))
+
+; draw-world : World -> Image
+; renders a world
+(define (draw-world w)
+  (cond
+    [(no-bullet? (world-bullet w))
+     (place-image defender
+                  (world-player w)
+                  defender-y
+                  (draw-aliens (world-aliens w)))]
+    [else 
+     (place-image bullet
+                  (posn-x (world-bullet w))
+                  (posn-y (world-bullet w))
+                  (place-image defender
+                               (world-player w)
+                               defender-y
+                               (draw-aliens (world-aliens w))))]))
+                       
+
+(check-expect (draw-world w2)
+              (place-image bullet
+                           100 100
+                           (place-image defender
+                           100 defender-y
+                           (draw-aliens (list (make-posn 20 20) (make-posn 50 20))))))
+(check-expect (draw-world w1)
+              (place-image defender
+                           100 defender-y
+                           (draw-aliens (list (make-posn 20 20) (make-posn 50 20))))) 
+
+
+; move-bullet : MaybePosn -> MaybePosn
+; Moves bullet up, if any, till the top of the screen, then removes it
+(define (move-bullet mp)
+  (cond
+    [(no-bullet? mp) mp]
+    [else (cond
+            [(> (posn-y mp) (- 0 (/ (image-height bullet) 2)))
+             (make-posn (posn-x mp)
+                        (- (posn-y mp) const-speed))]
+            [else (make-no-bullet)])]))
+
+(check-expect (move-bullet (make-no-bullet)) (make-no-bullet))
+(check-expect (move-bullet (make-posn 50 50)) (make-posn 50 (- 50 const-speed)))
+(check-expect (move-bullet (make-posn 50 -5)) (make-no-bullet))
+
+; tick : World -> World
+; move everything on the screen
+(define (tick w)
+  (make-world (move-aliens (world-aliens w))
+              (world-player w)
+              (move-bullet (world-bullet w))))
+
+; move-player : Number KeyEvent -> Number
+; moves the player left and right with left and right arrow
+(define (hit? mp p)
+  (cond
+    [(no-bullet? mp) false]
+    [else (cond
+            [(<= (sqrt (+ (sqr (- (posn-x mp)(posn-x p)))
+                          (sqr (- (posn-y mp)(posn-y p)))))
+                 10) true]
+            [else false])]))
+                        
+; a World is a ListOfPosns
+(big-bang (make-world (random-aliens 5) 100 (make-posn 100 100))
+  (to-draw draw-world)
+  (on-tick tick))
+
+
+

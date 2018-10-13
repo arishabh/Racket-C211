@@ -1,0 +1,41 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname |struct function|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+(require 2htdp/universe)
+
+; A Point is a (make-point Number Number)
+(define-struct point [x y])
+
+; Example
+(define p1 (make-point 3 4))
+(make-point 4 5)
+(point-x (make-point 4 5))
+(point? p1)
+(point? (point-x p1))
+
+; Courtesy Function
+; make-person : Number Number -> Point
+; point-x : Point -> Number
+; point-y : Point -> Number
+; point? : Anything -> Boolean
+
+; process-point: Point -> ...
+; ...
+(define (process point p)
+  (... (point-x p) ...
+       (point-y p) ...))
+
+
+; dist-from-origon: Point -> Number
+; It takes a point and calculates the distance from p to (make-point 0 0)
+(define (process point p)
+  (sprt(+ (sqr(point-x p)) (sqr(point-y p)))))
+
+(check-expect (dist-from-origin (make-point 3 4)) 5)
+(check-expect (dist-from-origin (make-point 5 12)0 13)
+
+
+
+
+  

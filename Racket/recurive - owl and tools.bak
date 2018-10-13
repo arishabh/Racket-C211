@@ -1,0 +1,62 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname |recurive - owl and tools|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+(require 2htdp/universe)
+
+; a Tool is one of:
+; - (make-solid-tool String)
+; - (make-hollow-tool String Tool)
+(define-struct solid [kind])
+(define-struct hollow [kind inner])
+
+; Examples:
+(define tool1 (make-solid-tool "phillips"))
+(define tool2 (make-hollow-tool "flathead" tool1))
+(define tool3 (make-hollow-tool "phillips" tool2))
+(define tool4 (make-hollow-tool "flathead" tool3))
+(define tool5 (make-hollow-tool "hammer" tool4))
+
+; process-tool : Tool -> ...
+; ...
+(define (process-tool t)
+  (cond
+    [(solid-tool? t) (... (solid-tool-kind t) ...) ]
+    [(hollow-tool? t) (... (hollow-tool-kind tool) ...
+                       ... (process-tool
+                            (hollow-tool-inner t)) ...)]))
+
+; a Nextedowl os ne of:
+; - (make-solid-tool)
+; - (make-hollow NestedOwl)
+(define-struct solid [])
+(define-struct hollow [inner])
+
+;Examples
+(define o1 (make-solid))
+(define o2 (make-hollow (make-solid)))
+(define o6 (make-hollow (make-hollow
+                         (make-hollow
+                          (make-hollow
+                           (make-hollow
+                            (make-solid)))))))
+
+; process-owl : NextedOwl -> ...
+; ...
+(define (process-owl o)
+  (cond
+    [(solid? no) ...]
+    [(hollow? no) (... (process-owl
+                        (hollow-inner no)) ...)]))
+
+; count : NestedOwl -> Number
+; Gives out the number of Nested Owls
+(define (count no)
+  (cond
+    [(solid? no) 1]
+    [(hollow? no) (+ 1 (process-owl
+                        (hollow-inner no)))]))
+
+(check-expect (count (make-solid)) 1)
+(check-expect (count o2) 2)
+(check-expect (count o6) 6)

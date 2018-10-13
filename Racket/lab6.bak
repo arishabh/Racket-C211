@@ -1,0 +1,47 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname lab6) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+(require 2htdp/universe)
+(require 2htdp/batch-io)
+
+; a NaturalNumber is one of:
+; - 0
+; - (n + 1)
+
+; process-nn : NaturalNumber -> ...
+; ...
+(define (process-nn n)
+  (cond
+    [(= n 0) ... ]
+    [else (... (process-nn (sub1 n)) ...)]))
+
+; a ListOfStrings is one of:
+; - empty
+; - (cons String ListOfStrings)
+
+(define los1 empty)
+(define los2 (list "Hello" "World"))
+(define los3 (list "Hello," "how" "are" "you?"))
+(define file-names (list "thefly.txt" "thegerm.txt" "theoctopus.txt" "theostrich.txt" "thetermite.txt"))
+
+; process-los : ListOfString -> ...
+; ...
+(define (process-los los)
+  (cond
+    [(empty? los) ...]
+    [else ( ... (first los) ...
+            (process-los (rest los)...))]))    
+
+; has-word? : ListOfString String -> Boolean
+; Checks if the list has that word given
+(define (has-word? los word)
+  (cond
+    [(empty? los) false]
+    [else (or (string=? word (first los))
+              (has-word? (rest los) word))]))
+
+(check-expect (has-word? los1 "Hello")false)
+(check-expect (has-word? los2 "Hello")true)
+(check-expect (has-word? los3 "Hello,")true)
+(check-expect (has-word? los3 "World")false)

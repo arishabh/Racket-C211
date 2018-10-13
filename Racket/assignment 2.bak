@@ -1,0 +1,46 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname |assignment 2|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+(require 2htdp/universe)
+
+(define background (rectangle 200 300 "solid" "lightblue"))
+(define rocket (above (triangle 20 "solid" "blue")
+                      (rectangle 20 60 "solid" "white")))
+(define resting-y-pos (- 300 (/ (image-height rocket) 2)))
+
+
+; a Time is a non-negative number
+; an Image is an image (in general, you don't have to mention this)
+; init-speed is a non 0 positive number
+; init-angle is a an angle (90, 180) less than 360 and more than 0
+
+; draw-rocket : Time -> Image
+; Render a launched rocket at time t with velocity init-speed at angle init-angle
+; (define (draw-rocket t)...)
+; 
+
+; (draw-rocket 0) => (place-image rocket 100 resting-y-pos background)
+; (draw-rocket 100) => (place-image rocket 100 (- resting-y-pos 100) background)
+; (draw-rocket 301) => Only Background
+
+
+(define init-speed 1)
+(define init-angle 45)
+(define 
+(define (draw-rocket t)
+  (cond
+    [(<= t 99) (place-image rocket 100 resting-y-pos background)]
+    [(> t 99) (place-image rocket 100 (- resting-y-pos (- t 99)) background)]))
+
+
+; Step 6: Testing
+;(check-expect (draw-rocket 0)
+;              (place-image rocket 100 resting-y-pos background))
+;(check-expect (draw-rocket 100)
+;              (place-image rocket 100 (- resting-y-pos 100) background))
+;(check-expect (draw-rocket 301)
+;              (place-image rocket 100 (- resting-y-pos 301) background))
+;
+(animate draw-rocket)
+

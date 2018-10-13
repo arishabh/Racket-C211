@@ -1,0 +1,190 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname |lab 3 structure definiation|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+
+; A Department is one of:
+; - "biology"
+; - "business"
+; - "computer science"
+; - "English"
+
+(define alices-department "computer science")
+(define bobs-department "business")
+(define charlies-department "English")
+(define dans-department "geology")
+
+; draw-department : Department -> Image(header because it doesnt give any process)
+; displays the department as image text
+(define (draw-department d) ...)
+
+; process-department : Department -> ...
+; ...
+(define (process-department d)
+  (cond [(string=? d "biology") ...]
+        [(string=? d "business") ...]
+        [(string=? d "computer science") ...]
+        [(string=? d "English") ...]))
+
+; (check-expect (process-department "biology") ...)
+; (check-expect (process-department "business") ...)
+; (check-expect (process-department "computer science") ...)
+; (check-expect (process-department "English") ...)
+
+; salary : Department -> Number
+; returns the salary for each department.
+(define (salary department)
+  (cond [(string=? department "biology") 100000]
+        [(string=? department "business") 110000]
+        [(string=? department "computer science") 120000]
+        [(string=? department "English") 130000]))
+(check-expect (salary "biology") 100000)
+(check-expect (salary "business") 110000)
+(check-expect (salary "computer science") 120000)
+(check-expect (salary "English") 130000)
+
+
+
+
+; A suit is one of:
+; - "Diomands"
+; - "Spades"
+; - "Clubs"
+; - "Hearts"
+
+(define suit1 "Diomands")
+(define suit2 "Spades")
+(define suit3 "Clubs")
+
+; process-suits: Suits -> ...
+; ...
+(define (process-suits s)
+  (cond
+    [(string=? s "Clubs") ...]
+    [(string=? s "Hearts") ...]
+    [(string=? s "Spades") ...]
+    [(string=? s "Diomands") ...]))
+
+;(check-expect (process-suits "Diomands")...)
+;(check-expect (process-suits "Clubs")...)
+;(check-expect (process-suits "Hearts")...)
+;(check-expect (process-suits "Spades")...)
+
+; club-points: String -> Number
+; Each club is worth certain points, so each string will return the coressponding points
+
+(define (process-suits s)
+  (cond
+    [(string=? s "Clubs") 1]
+    [(string=? s "Hearts") 3]
+    [(string=? s "Spades") 4]
+    [(string=? s "Diomands") 2]))
+
+(check-expect (process-suits "Diomands") 2)
+(check-expect (process-suits "Clubs") 1)
+(check-expect (process-suits "Hearts") 3)
+(check-expect (process-suits "Spades") 4)
+
+; A RainbowColor is one of:
+; - "Hot Pick"
+; - "Red"
+; - "Orange"
+; - "Yellow"
+; - "Green"
+; - "Turquoise"
+; - "Indigo"
+; - "Violet"
+
+(define color1 "Yellow")
+(define color2 "Green")
+(define color3 "Red")
+(define color4 "purple")
+
+; process-color: Color -> ...
+; ...
+(define (process-color c)
+  (cond
+    [(string=? c "Hot Pink") ...]
+    [(string=? c "Orange") ...]
+    [(string=? c "Red") ...]
+    [(string=? c "Yellow") ...]
+    [(string=? c "Green") ...]
+    [(string=? c "Indigo") ...]
+    [(string=? c "Turquoise") ...]
+    [(string=? c "Violet") ...]))
+
+;(check-expect (process-color "Indigo")...)
+;(check-expect (process-color "Orange")...)
+;(check-expect (process-color "Red")...)
+;(check-expect (process-color "Green")...)
+;(check-expect (process-color "Yellow")...)
+;(check-expect (process-color "Violet")...)
+;(check-expect (process-color "Turqouise")...)
+;(check-expect (process-color "Hot Pink")...)
+
+; next-color: color -> color
+; Takes in a color in terms of string and returns the next color
+
+(define (process-color c)
+  (cond
+    [(string=? c "Hot Pink") "Red"]
+    [(string=? c "Red") "Orange"]
+    [(string=? c "Orange") "Yellow"]
+    [(string=? c "Yellow") "Green"]
+    [(string=? c "Green") "Indigo"]
+    [(string=? c "Indigo") "Turquoise"]
+    [(string=? c "Turquoise") "Violet"]
+    [(string=? c "Violet") "Hot Pink"]))
+
+(check-expect (process-color "Indigo")"Turquoise")
+(check-expect (process-color "Orange")"Yellow")
+(check-expect (process-color "Red")"Orange")
+(check-expect (process-color "Green")"Indigo")
+(check-expect (process-color "Yellow")"Green")
+(check-expect (process-color "Violet")"Hot Pink")
+(check-expect (process-color "Turqouise")"Violet")
+(check-expect (process-color "Hot Pink")"Red")
+
+
+; A Shape is one of:
+; - "triangle"
+; - "rectangle"
+; - "pentagon"
+; - "hexagon"
+
+(define shape1 "triangle")
+(define shape2 "hexagon")
+(define shape3 "rectangle")
+(define shape4 "circle")
+
+; process-shape: Shape -> ...
+; ...
+(define (process-shape s)
+  [cond
+    [(string=? s "triangle") ...]
+    [(string=? s "hexagon") ...]
+    [(string=? s "reactangle") ...]
+    [(string=? s "pentagon") ...]])
+
+;(check-expect (process-shape "triangle")...)
+;(check-expect (process-shape "hexagon")...)
+;(check-expect (process-shape "rectangle")...)
+;(check-expect (process-shape "pentagon")...)
+
+; sides-shape: Shape -> Number
+; Takes in a shape and tells the number of sides of the shape
+(define (sides-shape s)
+  [cond
+    [(string=? s "triangle") 3]
+    [(string=? s "hexagon") 6]
+    [(string=? s "reactangle") 4]
+    [(string=? s "pentagon") 5]])
+
+(check-expect (process-shape "triangle")3)
+(check-expect (process-shape "hexagon")6)
+(check-expect (process-shape "rectangle")4)
+(check-expect (process-shape "pentagon")5)
+
+
+
+

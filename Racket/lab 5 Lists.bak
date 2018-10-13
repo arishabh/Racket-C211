@@ -1,0 +1,147 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-reader.ss" "lang")((modname |lab 5 Lists|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/image)
+(require 2htdp/universe)
+
+; A Posn is (make-posn Number Number)
+; (define-struct posn [x y]) 
+; The error if we define this is -> posn: this name was defined in the
+; language or a required library and cannot be re-defined
+
+; Courtosy functions
+; make-posn : Number Number -> posn
+; posn-x : posn -> Number
+; posn-y : posn -> Number
+; posn? : Anything -> Boolean
+
+(define pos1 (make-posn 10 10))
+(define pos2 (make-posn 1 0))
+(define pos3 (make-posn 30 20))
+
+; positive-posn : Posn -> boolean
+; Takes in a POsn and tells if the x coordinate is positive or not
+(define (positive-posn p)
+  (positive? (posn-x p)))
+
+(check-expect (positive-posn pos1) true)
+(check-expect (positive-posn pos2) true)
+(check-expect (positive-posn pos3) true)
+
+; A BunchOfPons is one of:
+; - (make-none)
+; - (make-some Pons BunchOfPons)
+(define-struct none [])
+(define-struct some [first rest])
+
+(define bop1 (make-none))
+(define bop2 (make-some pos1 (make-none)))
+(define bop3 (make-some pos2 (make-some pos3 (make-none))))
+
+; A ListOfPosns is one of:
+; - empty
+; - (cons Posn ListOfPosns)
+
+(define lop1 empty)
+(define lop2 (cons pos1 empty))
+(define lop3 (cons pos2 (cons pos3 empty)))
+
+; process-list-of-pons : LisOfPons -> ...
+; ...
+(define (process-list-of-pons lop)
+  (cond
+    [(empty? lop) ...]
+    [else (... (process-posn (first lop)) ...
+               (process-list-of-pons (rest lop)) ..)]))
+
+; all-positive? : ListOfPosn -> Boolean
+; tells if all the posn in the list have a positive x coordinate
+(define (all-positive? lop)
+  (cond
+    [(empty? lop) true]
+    [else (and (positive-posn (first lop)) 
+               (all-positive? (rest lop)))]))
+
+(check-expect (all-positive? lop1) true)
+(check-expect (all-positive? lop2) true)
+(check-expect (all-positive? lop3) true)
+
+(define back (empty-scene 300 300))
+(define img (circle 10 "solid" "blue"))
+
+; draw : ListOfPosn -> image
+; Puts a circle on back as per the posn
+(define (draw lop)
+  (cond
+    [(empty? lop) back]
+    [else (place-image img
+                       (posn-x (first lop))
+                       (posn-y (first lop))
+                       (draw (rest lop)))]))
+
+(check-expect (draw lop1) back)
+(check-expect (draw lop2) (place-image img
+                                       10
+                                       10
+                                       back))
+              
+(check-expect (draw lop3) (place-image img
+                                       1
+                                       0
+                                       (place-image img
+                                                    30
+                                                    20
+                                                    back)))
+
+; move : ListOfPosn -> ListOfPosn
+; Increases the y coordinate of the posn by 1
+(define (move lop)
+  (cond
+    [(empty? lop) empty]
+    [else (cons (make-posn
+                 (posn-x (first lop))
+                 (add1 (posn-y (first lop)))) 
+                (move (rest lop)))]))
+
+(check-expect (move lop1) empty)
+(check-expect (move lop2) (cons
+                           (make-posn 10 11)
+                           empty))
+(check-expect (move lop3) (cons
+                           (make-posn 1 1)
+                           (cons
+                            (make-posn 30 21)
+                            empty)))
+
+; add : ListofPosn KeyEvent -> ListOfPOsn
+; adds a random posn in the list
+(define (add lop)
+  (cond
+    [(empty? lop) (cons (make-posn
+                         (random 300)
+                         (random 300))
+                        empty)]
+    [else (cons (make-posn
+                 (random 300)
+                 (random 300))
+                (cons
+                 (positive-posn (first lop)) 
+                 (all-positive? (rest lop))))]))
+
+(check-expect (add lop1) (cons (make-posn
+                                (random 300)
+                                (random 300))
+                               empty))
+(check-expect (add lop2) (cons (make-posn
+                                (random 300)
+                                (random 300))
+                               (cons pos1
+                                     empty)))
+(check-expect (add lop3) (cons (make-posn
+                                (random 300)
+                                (random 300))
+                               (cons pos2
+                                     (cons pos3
+                                           empty))))
+
+  
